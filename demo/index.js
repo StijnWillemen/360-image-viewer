@@ -19,7 +19,7 @@ const autoSpin = false;
 
 // Load your image
 const image = new Image();
-image.src = imageUrl;
+image.src = "img_3.png";
 image.onload = () => {
     // Setup the 360 viewer
     const viewer = create360Viewer({
@@ -33,20 +33,25 @@ image.onload = () => {
     viewer.start();
 
     viewer.on('tick', (dt) => {
-        if (viewer.controls.theta <= -1.2) {
+        if (viewer.controls.theta <= -0.8) {
             viewer.stop()
             const image = new Image()
-            image.src = "charcoal_equirectangular_styled_stitched.jpg"
+            image.src = "img_4.png"
             image.onload = () => {
                 // Setup the 360 viewer
-                const viewer = create360Viewer({
+                const viewer2 = create360Viewer({
                     image: image,
                     canvas: canvas
                 });
                 setupDragDrop(canvas, viewer);
+                viewer2.controls.theta = viewer.controls.theta
+
+                viewer2.controls.phi = viewer.controls.phi
+
+                viewer2.controls.zoom = viewer.controls.zoom
 
                 // Start canvas render loop
-                viewer.start();
+                viewer2.start();
                 // Start canvas render loop
 
             }
