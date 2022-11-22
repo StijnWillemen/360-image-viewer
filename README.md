@@ -10,13 +10,13 @@ npm install 360-image-viewer --save
 
 ## Live Demo
 
-Click [here](http://360-image-viewer-test.surge.sh/) to see a demo of this module in action. The source code is in [demo/index.js](./demo/index.js).
+Click [here](http://360-image-viewer-test.surge.sh/) to see a demo of this module in action. The source code is in [demo/index.js](public/index.js).
 
 [<img src="demo/screenshot.jpg" width="75%" />](http://360-image-viewer-test.surge.sh/)
 
 ## Example
 
-The code below sets up a full-screen 360 image viewer. For a more complete example, see [demo/index.js](./demo/index.js).
+The code below sets up a full-screen 360 image viewer. For a more complete example, see [demo/index.js](public/index.js).
 
 ```js
 const create360Viewer = require('360-image-viewer');

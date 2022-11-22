@@ -30,10 +30,10 @@
   },
   "scripts": {
     "test": "node test.js",
-    "deploy:upload": "surge -p demo -d 360-image-viewer-test.surge.sh",
+    "deploy:upload": "surge -p public -d 360-image-viewer-test.surge.sh",
     "deploy": "npm run build && npm run deploy:upload",
-    "start": "budo demo/index.js:bundle.js --dir demo --live -- -t babelify",
-    "build": "browserify demo/index.js -t babelify | uglifyjs -m -c warnings=false > public/bundle.js"
+    "start": "budo public/index.js:bundle.js --dir public --live -- -t babelify",
+    "build": "browserify public/index.js -t babelify | uglifyjs -m -c warnings=false > public/bundle.js"
   },
   "keywords": [],
   "repository": {
