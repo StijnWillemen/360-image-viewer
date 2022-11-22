@@ -8,7 +8,7 @@ const dropRegion = document.querySelector('#drop-region');
 const canvas = createCanvas({
   canvas: document.querySelector('#canvas'),
   // without this, the canvas defaults to full-screen
-  // viewport: [ 20, 20, 500, 256 ]
+  //viewport: [ 20, 20, 500, 256 ]
 });
 
 // Get the max image size possible
@@ -26,23 +26,20 @@ image.onload = () => {
     image: image,
     canvas: canvas
   });
-
   setupDragDrop(canvas, viewer);
 
   // Start canvas render loop
   viewer.start();
 
   viewer.on('tick', (dt) => {
-    if (autoSpin && !viewer.controls.dragging) {
-      viewer.controls.theta -= dt * 0.00005;
-    }
+    console.log(viewer.controls.theta)
   });
 };
 
 // Utility to create a device pixel scaled canvas
 function createCanvas (opt = {}) {
   // default to full screen (no width/height specified)
-  const viewport = opt.viewport || [ 0, 0 ];
+  const viewport = opt.viewport || [ 0, 0];
 
   const canvas = opt.canvas || document.createElement('canvas');
   canvas.style.position = 'absolute';
