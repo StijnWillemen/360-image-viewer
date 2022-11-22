@@ -17,123 +17,186 @@ const imageUrl = getImageURL();
 // whether to always rotate the view
 const autoSpin = false;
 
-// Load your image
-const image = new Image();
-image.src = "img_3.png";
-image.onload = () => {
-    // Setup the 360 viewer
-    const viewer = create360Viewer({
-        image: image,
-        canvas: canvas
-    });
 
-    setupDragDrop(canvas, viewer);
+// upload the first image here
+startRecursion("img_4.png", null)
 
-    // Start canvas render loop
-    viewer.start();
-
-    viewer.on('tick', (dt) => {
-        if (viewer.controls.theta <= -0.8) {
-            viewer.stop()
-            const image = new Image()
-            image.src = "img_4.png"
-            image.onload = () => {
-                // Setup the 360 viewer
-                const viewer2 = create360Viewer({
-                    image: image,
-                    canvas: canvas
-                });
-                setupDragDrop(canvas, viewer);
-                viewer2.controls.theta = viewer.controls.theta
-
-                viewer2.controls.phi = viewer.controls.phi
-
-                viewer2.controls.zoom = viewer.controls.zoom
-
-                // Start canvas render loop
-                viewer2.start();
-                // Start canvas render loop
-
-            }
-        }
-    });
-}
-
-
-// Utility to create a device pixel scaled canvas
-    function createCanvas(opt = {}) {
-        // default to full screen (no width/height specified)
-        const viewport = opt.viewport || [0, 0];
-
-        const canvas = opt.canvas || document.createElement('canvas');
-        canvas.style.position = 'absolute';
-        canvas.style.top = `${viewport[0]}px`;
-        canvas.style.left = `${viewport[1]}px`;
-
-        // Resize the canvas with the proper device pixel ratio
-        const resizeCanvas = () => {
-            // default to fullscreen if viewport width/height is unspecified
-            const width = typeof viewport[2] === 'number' ? viewport[2] : window.innerWidth;
-            const height = typeof viewport[3] === 'number' ? viewport[3] : window.innerHeight;
-            const dpr = window.devicePixelRatio;
-            canvas.width = width * dpr;
-            canvas.height = height * dpr;
-            canvas.style.width = `${width}px`;
-            canvas.style.height = `${height}px`;
-        };
-
-        // Ensure the grab cursor appears even when the mouse is outside the window
-        const setupGrabCursor = () => {
-            canvas.addEventListener('mousedown', () => {
-                document.documentElement.classList.remove('grabbing');
-                document.documentElement.classList.add('grabbing');
-            });
-            window.addEventListener('mouseup', () => {
-                document.documentElement.classList.remove('grabbing');
-            });
-        };
-
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-        setupGrabCursor();
-        return canvas;
+function startRecursion(img, prevviewer,theta, phi) {
+    if(prevviewer != null) {
+        prevviewer.stop()
     }
 
-    function getImageURL() {
-        // Choose a large texture size based on our GPU
-        const maxTextureSize = getMaxTextureSize();
-        let imageUrl = 'pano_2048.jpg';
-        if (maxTextureSize >= 7000) imageUrl = 'pano_7000.jpg';
-        else if (maxTextureSize >= 4096) imageUrl = 'pano_4096.jpg';
-        return imageUrl;
-    }
+    const image = new Image();
+    image.src = img;
+    image.onload = () => {
+        // Setup the 360 viewer
+        const viewer = create360Viewer({
+            image: image,
+            canvas: canvas
+        });
+        viewer.controls.phi = phi ? phi : 0
+        viewer.controls.theta = theta ? theta : 0
+        setupDragDrop(canvas, viewer);
 
-    function getImageURL2() {
-        // Choose a large texture size based on our GPU
-        const maxTextureSize = getMaxTextureSize();
-        let imageUrl = 'charcoal_equirectangular_styled_stitched.jpg';
+        // Start canvas render loop
+        viewer.start();
 
-        return imageUrl;
-    }
+        viewer.on('tick', (dt) => {
 
-    function setupDragDrop(canvas, viewer) {
-        dragDrop(canvas, {
-            onDragEnter: () => {
-                dropRegion.style.display = '';
-            },
-            onDragLeave: () => {
-                dropRegion.style.display = 'none';
-            },
-            onDrop: (files) => {
-                var img = new Image();
-                img.onload = () => {
-                    viewer.texture(img);
-                };
-                img.onerror = () => {
-                    alert('Could not load image!');
-                };
-                img.crossOrigin = 'Anonymous';
-                img.src = URL.createObjectURL(files[0]);
+            if(viewer.controls.theta  >= 0.8) {
+                viewer.stop()
+                //upload the second image here
+                startSecondRecursion("img_3.png",viewer,viewer.controls.theta, viewer.controls.phi)
             }
         });
     }
+}
+
+function startSecondRecursion(img, prevviewer,theta, phi) {
+    if(prevviewer != null) {
+        prevviewer.stop()
+    }
+
+    const image = new Image();
+    image.src = img;
+    image.onload = () => {
+        // Setup the 360 viewer
+        const viewer = create360Viewer({
+            image: image,
+            canvas: canvas
+        });
+        viewer.controls.phi = phi ? phi : 0
+        viewer.controls.theta = theta ? theta : 0
+        setupDragDrop(canvas, viewer);
+
+        // Start canvas render loop
+        viewer.start();
+
+        viewer.on('tick', (dt) => {
+
+            if(viewer.controls.theta  <= -2.4) {
+                viewer.stop()
+                startRecursion("img_4.png",viewer,viewer.controls.theta, viewer.controls.phi)
+            }
+        });
+    }
+}
+
+function startFirstViewer(viewer) {
+    viewer.stop()
+    const image2 = new Image()
+    image2.src = "img_3.png"
+    image2.onload = () => {
+        // Setup the 360 viewer
+        const viewer2 = create360Viewer({
+            image: image2,
+            canvas: canvas
+        });
+        setupDragDrop(canvas, viewer);
+        viewer2.controls.theta = viewer.controls.theta
+
+        viewer2.controls.phi = viewer.controls.phi
+
+
+        // Start canvas render loop
+        viewer2.start();
+    }
+}
+
+function startSecondViewer(viewer) {
+    viewer.stop()
+    const image2 = new Image()
+    image2.src = "img_4.png"
+    image2.onload = () => {
+        // Setup the 360 viewer
+        const viewer2 = create360Viewer({
+            image: image2,
+            canvas: canvas
+        });
+        setupDragDrop(canvas, viewer);
+        viewer2.controls.theta = viewer.controls.theta
+
+        viewer2.controls.phi = viewer.controls.phi
+
+
+        // Start canvas render loop
+        viewer2.start();
+    }
+}
+// Utility to create a device pixel scaled canvas
+function createCanvas(opt = {}) {
+    // default to full screen (no width/height specified)
+    const viewport = opt.viewport || [0, 0];
+
+    const canvas = opt.canvas || document.createElement('canvas');
+    canvas.style.position = 'absolute';
+    canvas.style.top = `${viewport[0]}px`;
+    canvas.style.left = `${viewport[1]}px`;
+
+    // Resize the canvas with the proper device pixel ratio
+    const resizeCanvas = () => {
+        // default to fullscreen if viewport width/height is unspecified
+        const width = typeof viewport[2] === 'number' ? viewport[2] : window.innerWidth;
+        const height = typeof viewport[3] === 'number' ? viewport[3] : window.innerHeight;
+        const dpr = window.devicePixelRatio;
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
+        canvas.style.width = `${width}px`;
+        canvas.style.height = `${height}px`;
+    };
+
+    // Ensure the grab cursor appears even when the mouse is outside the window
+    const setupGrabCursor = () => {
+        canvas.addEventListener('mousedown', () => {
+            document.documentElement.classList.remove('grabbing');
+            document.documentElement.classList.add('grabbing');
+        });
+        window.addEventListener('mouseup', () => {
+            document.documentElement.classList.remove('grabbing');
+        });
+    };
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    setupGrabCursor();
+    return canvas;
+}
+
+function getImageURL() {
+    // Choose a large texture size based on our GPU
+    const maxTextureSize = getMaxTextureSize();
+    let imageUrl = 'pano_2048.jpg';
+    if (maxTextureSize >= 7000) imageUrl = 'pano_7000.jpg';
+    else if (maxTextureSize >= 4096) imageUrl = 'pano_4096.jpg';
+    return imageUrl;
+}
+
+function getImageURL2() {
+    // Choose a large texture size based on our GPU
+    const maxTextureSize = getMaxTextureSize();
+    let imageUrl = 'charcoal_equirectangular_styled_stitched.jpg';
+
+    return imageUrl;
+}
+
+function setupDragDrop(canvas, viewer) {
+    dragDrop(canvas, {
+        onDragEnter: () => {
+            dropRegion.style.display = '';
+        },
+        onDragLeave: () => {
+            dropRegion.style.display = 'none';
+        },
+        onDrop: (files) => {
+            var img = new Image();
+            img.onload = () => {
+                viewer.texture(img);
+            };
+            img.onerror = () => {
+                alert('Could not load image!');
+            };
+            img.crossOrigin = 'Anonymous';
+            img.src = URL.createObjectURL(files[0]);
+        }
+    });
+}
