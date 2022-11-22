@@ -47,7 +47,7 @@ function create360Viewer (opt) {
 
   // settings for gl.clear
   var clearOpts = {
-    color: [ 0, 0, 0, 0 ],
+    color: [ 255, 0, 0, 0 ],
     depth: 1
   };
 
