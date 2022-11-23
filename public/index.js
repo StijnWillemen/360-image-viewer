@@ -76,7 +76,6 @@ function startSecondRecursion(img, prevviewer,theta, phi) {
         viewer.start();
 
         viewer.on('tick', (dt) => {
-            console.log(viewer.controls.theta)
             if(viewer.controls.theta  <= -2.4 || viewer.controls.theta <= -0.08) {
                 viewer.stop()
                 startRecursion("img_4.png",viewer,viewer.controls.theta, viewer.controls.phi)
