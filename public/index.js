@@ -34,8 +34,9 @@ function startRecursion(img, prevviewer,theta, phi) {
             image: image,
             canvas: canvas
         });
-        viewer.controls.phi = phi ? phi : 0
+        viewer.controls.phi = phi ? phi : 1.25
         viewer.controls.theta = theta ? theta : 0
+
         setupDragDrop(canvas, viewer);
 
         // Start canvas render loop
@@ -43,7 +44,7 @@ function startRecursion(img, prevviewer,theta, phi) {
 
         viewer.on('tick', (dt) => {
 
-            if(viewer.controls.theta  >= 0.8) {
+            if(viewer.controls.theta  >= 0.8 ) {
                 viewer.stop()
                 //upload the second image here
                 startSecondRecursion("img_3.png",viewer,viewer.controls.theta, viewer.controls.phi)
@@ -60,6 +61,8 @@ function startSecondRecursion(img, prevviewer,theta, phi) {
     const image = new Image();
     image.src = img;
     image.onload = () => {
+
+
         // Setup the 360 viewer
         const viewer = create360Viewer({
             image: image,
@@ -73,8 +76,8 @@ function startSecondRecursion(img, prevviewer,theta, phi) {
         viewer.start();
 
         viewer.on('tick', (dt) => {
-
-            if(viewer.controls.theta  <= -2.4) {
+            console.log(viewer.controls.theta)
+            if(viewer.controls.theta  <= -2.4 || viewer.controls.theta <= -0.08) {
                 viewer.stop()
                 startRecursion("img_4.png",viewer,viewer.controls.theta, viewer.controls.phi)
             }

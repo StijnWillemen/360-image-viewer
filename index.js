@@ -29,7 +29,7 @@ function create360Viewer (opt) {
 
   // Our perspective camera will hold projection/view matrices
   var camera = createCamera({
-    fov: defined(opt.fov, 45 * Math.PI / 180),
+    fov: defined(opt.fov, 70 * Math.PI / 180),
     near: 0.1,
     far: 10
   })
