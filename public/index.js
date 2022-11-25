@@ -15,14 +15,15 @@ const canvas = createCanvas({
 const imageUrl = getImageURL();
 
 // whether to always rotate the view
-const autoSpin = false;
 
+var image1 = new Image()
+var image2 = new Image()
 
 // upload the first image here
 startRecursion("img_4.png", null)
 
-function startRecursion(img, prevviewer,theta, phi) {
-    if(prevviewer != null) {
+function startRecursion(img, prevviewer, theta, phi) {
+    if (prevviewer != null) {
         prevviewer.stop()
     }
 
@@ -44,17 +45,20 @@ function startRecursion(img, prevviewer,theta, phi) {
 
         viewer.on('tick', (dt) => {
 
-            if(viewer.controls.theta  >= 0.8 ) {
+            if (viewer.controls.theta >= 0.8) {
                 viewer.stop()
-                //upload the second image here
-                startSecondRecursion("img_3.png",viewer,viewer.controls.theta, viewer.controls.phi)
+                if (image2.src !== "") {
+                    startSecondRecursion(image2.src, viewer, viewer.controls.theta, viewer.controls.phi)
+                } else {
+                    startSecondRecursion("img_3.png", viewer, viewer.controls.theta, viewer.controls.phi)
+                }
             }
         });
     }
 }
 
-function startSecondRecursion(img, prevviewer,theta, phi) {
-    if(prevviewer != null) {
+function startSecondRecursion(img, prevviewer, theta, phi) {
+    if (prevviewer != null) {
         prevviewer.stop()
     }
 
@@ -75,56 +79,21 @@ function startSecondRecursion(img, prevviewer,theta, phi) {
         // Start canvas render loop
         viewer.start();
 
+
         viewer.on('tick', (dt) => {
-            if(viewer.controls.theta  <= -2.4 || viewer.controls.theta <= -0.08) {
+            if (viewer.controls.theta <= -2.4 || viewer.controls.theta <= -0.08) {
                 viewer.stop()
-                startRecursion("img_4.png",viewer,viewer.controls.theta, viewer.controls.phi)
+
+                if (image1.src !== "") {
+                    startRecursion(image1.src, viewer, viewer.controls.theta, viewer.controls.phi)
+                } else {
+                    startRecursion("img_4.png", viewer, viewer.controls.theta, viewer.controls.phi)
+                }
             }
         });
     }
 }
 
-function startFirstViewer(viewer) {
-    viewer.stop()
-    const image2 = new Image()
-    image2.src = "img_3.png"
-    image2.onload = () => {
-        // Setup the 360 viewer
-        const viewer2 = create360Viewer({
-            image: image2,
-            canvas: canvas
-        });
-        setupDragDrop(canvas, viewer);
-        viewer2.controls.theta = viewer.controls.theta
-
-        viewer2.controls.phi = viewer.controls.phi
-
-
-        // Start canvas render loop
-        viewer2.start();
-    }
-}
-
-function startSecondViewer(viewer) {
-    viewer.stop()
-    const image2 = new Image()
-    image2.src = "img_4.png"
-    image2.onload = () => {
-        // Setup the 360 viewer
-        const viewer2 = create360Viewer({
-            image: image2,
-            canvas: canvas
-        });
-        setupDragDrop(canvas, viewer);
-        viewer2.controls.theta = viewer.controls.theta
-
-        viewer2.controls.phi = viewer.controls.phi
-
-
-        // Start canvas render loop
-        viewer2.start();
-    }
-}
 // Utility to create a device pixel scaled canvas
 function createCanvas(opt = {}) {
     // default to full screen (no width/height specified)
@@ -173,13 +142,6 @@ function getImageURL() {
     return imageUrl;
 }
 
-function getImageURL2() {
-    // Choose a large texture size based on our GPU
-    const maxTextureSize = getMaxTextureSize();
-    let imageUrl = 'charcoal_equirectangular_styled_stitched.jpg';
-
-    return imageUrl;
-}
 
 function setupDragDrop(canvas, viewer) {
     dragDrop(canvas, {
@@ -199,6 +161,17 @@ function setupDragDrop(canvas, viewer) {
             };
             img.crossOrigin = 'Anonymous';
             img.src = URL.createObjectURL(files[0]);
+
+            if (image1.src === "") {
+
+                image1.src = img.src
+
+
+            } else if (image2.src === "") {
+
+                image2.src = img.src
+
+            }
         }
     });
 }
